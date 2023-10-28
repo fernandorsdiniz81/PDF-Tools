@@ -2,6 +2,7 @@ import pypdf # https://pypi.org/project/pypdf/
 import os
 import PySimpleGUI as sg
 import re
+import webbrowser
 
 class PdfTools:
     def __init__(self) -> None:
@@ -64,9 +65,10 @@ class Interface:
     
     def create_window(self):
         sg.theme("SystemDefaultForReal")
-        menu = [["&menu",["&sobre", "&contato"]]]
+        menu = [["&menu",["&sobre", "&contato", "código &fonte"]]]
         self.about = "Esta é uma aplicação independente, com a finalidade de facilitar a manipulação de arquivos PDF.\n\nEm nenhum momento os arquivos são compartilhados na internet.\n"
         self.contact = "Fernando Diniz\nfernandorsdiniz@gmail.com"
+        self.git = "https://github.com/fernandorsdiniz81/PDF-Tools/blob/main/main.py"
        
         merger_layout = [
                 [sg.Text("Selecione os arquivos a serem mesclados:")],
@@ -78,6 +80,7 @@ class Interface:
                 ]
         
         compressor_layout = [
+                [sg.Text("Selecione o arquivo a ser compactado:")],
                 [sg.Button("arquivo")],
                 [sg.Text("nível de compressão: ", key="compression_text", visible=False), sg.Spin([i for i in range(1,10)], initial_value=9, key='compression', size=(3,1), visible=False)],
                 [sg.Text("qualidade das imagens:", key="image_quality_text", visible=False), sg.Spin([i for i in range(1,101)], initial_value=80, key='image_quality', size=(3,1), visible=False)],
@@ -239,13 +242,17 @@ class Interface:
                         sg.popup("Erro ao salvar o arquivo!", )
                 else:
                     sg.popup(f'Você tem que escolher onde será salvo o arquivo "{file_name}-compressed.pdf"!', )
+            
+            ############ menu ##########################################
                    
             elif event == "sobre":
                 sg.popup(self.about, title="Sobre esta aplicação")
             
             elif event == "contato":
-                
                 sg.popup(self.contact, title="Contato")
+
+            elif event == "código fonte":
+                webbrowser.open(self.git)
                         
         window.close()
  
