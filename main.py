@@ -19,7 +19,7 @@ class PdfTools:
         merger.close()
 
 
-    def compressor(self, path, file, compression, image_quality):
+    def compressor(self, path, file, file_name, compression, image_quality):
         level = compression
         quality = image_quality
         reader = pypdf.PdfReader(file)
@@ -33,7 +33,7 @@ class PdfTools:
             for img in page.images:
                 img.replace(img.image, quality=quality)
 
-        with open(f"{file[:-4]}-compressed.pdf", "wb") as f:
+        with open(f"{path}/{file_name}", "wb") as f:
             writer.write(f)
 
    
@@ -58,9 +58,9 @@ class Interface:
         pdf_tools.merger(file_list, path)
         
     
-    def run_compressor(self, path, file, compression, image_quality):
+    def run_compressor(self, path, file, file_name, compression, image_quality):
         pdf_tools = PdfTools()
-        pdf_tools.compressor(path, file, compression, image_quality)
+        pdf_tools.compressor(path, file, file_name, compression, image_quality)
         
     
     def create_window(self):
@@ -232,10 +232,10 @@ class Interface:
                 path = sg.popup_get_folder(f'Selecione onde o arquivo "{file_name}" será salvo:', keep_on_top=True)
                 if path != None:
                     initial_size = os.path.getsize(file_to_compress)
-                    self.run_compressor(path, file_to_compress, compression, image_quality)
+                    self.run_compressor(path, file_to_compress, file_name, compression, image_quality)
                     if os.path.exists(f"{path}/{file_name}"):
                         hide_compressor_elements()
-                        final_size = os.path.getsize(f"{file_to_compress[:-4]}-compressed.pdf")
+                        final_size = os.path.getsize(f"{path}/{file_name}")
                         size_delta = round((final_size / initial_size)*100)
                         sg.popup(f"Pronto!\nO arquivo compactado tem {size_delta}% do tamanho do arquivo original.", )
                     else:
