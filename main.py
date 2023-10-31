@@ -241,7 +241,7 @@ class Interface:
                     else:
                         sg.popup("Erro ao salvar o arquivo!", )
                 else:
-                    sg.popup(f'Você tem que escolher onde será salvo o arquivo "{file_name}-compressed.pdf"!', )
+                    sg.popup(f'Você tem que escolher onde será salvo o arquivo "{file_name}"!', )
             
             ############ menu ##########################################
                    
