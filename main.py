@@ -272,6 +272,7 @@ class Interface:
         window.close()
  
  
+ 
          
 app = Interface()
 app.open_window()
