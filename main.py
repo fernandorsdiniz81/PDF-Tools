@@ -36,14 +36,14 @@ class PdfTools:
         with open(f"{path}/{file_name}", "wb") as f:
             writer.write(f)
 
-   
+  
 class Interface:
     def __init__(self):
         self.favorites_themes = "SystemDefault SystemDefaultForReal SystemDefault1 LightBrown12 DarkGrey10 LightGreen4 Reddit DarkTeal11 DarkGrey7 DarkBlue LightBrown12".split()
     
     
     def simplify_file_name(self, file): # para excluir o caminho do nome do arquivo
-        pattern = re.compile(r"([0-9a-zA-Z-:]*/)*")
+        pattern = re.compile(r"(.*/)*")
         complete_path = file
         test = re.match(pattern, complete_path)
         if test:
@@ -84,7 +84,7 @@ class Interface:
                 [sg.Button("arquivo")],
                 [sg.Text("nível de compressão: ", key="compression_text", visible=False), sg.Spin([i for i in range(1,10)], initial_value=9, key='compression', size=(3,1), visible=False)],
                 [sg.Text("qualidade das imagens:", key="image_quality_text", visible=False), sg.Spin([i for i in range(1,101)], initial_value=80, key='image_quality', size=(3,1), visible=False)],
-                [sg.ProgressBar(100, orientation='h', size=(30, 30), key='progress_bar', visible=False)],
+                [sg.Image(data=sg.DEFAULT_BASE64_LOADING_GIF, enable_events=True, key='processing_animation', visible=False)],
                 [sg.Text("", key="compressor_text", visible=False, size=(350,1))],
                 [sg.Button("compactar", bind_return_key=True, visible=False)]
                 ]
@@ -135,10 +135,11 @@ class Interface:
             window["image_quality_text"].update(visible=False)
             window["image_quality"].update(visible=False)
             window["compactar"].update(visible=False)
-        
+            
         while True:
             event, value = window.read(timeout=100)
-                                                              
+            window['processing_animation'].update_animation(sg.DEFAULT_BASE64_LOADING_GIF, time_between_frames=100)                                                  
+            
             if event == sg.WIN_CLOSED:
                 break
             
@@ -230,16 +231,30 @@ class Interface:
                 image_quality = value["image_quality"]
                 file_name = f"{self.simplify_file_name(file_to_compress[:-4])}-compressed.pdf"
                 path = sg.popup_get_folder(f'Selecione onde o arquivo "{file_name}" será salvo:', keep_on_top=True)
+                compressed_file = f"{path}/{file_name}"
+                
                 if path != None:
                     initial_size = os.path.getsize(file_to_compress)
+                    window["processing_animation"].update(visible=True)
                     self.run_compressor(path, file_to_compress, file_name, compression, image_quality)
-                    if os.path.exists(f"{path}/{file_name}"):
+                    
+                    if os.path.exists(compressed_file):
                         hide_compressor_elements()
-                        final_size = os.path.getsize(f"{path}/{file_name}")
+                        window["processing_animation"].update(visible=False)
+                        final_size = os.path.getsize(compressed_file)
                         size_delta = round((final_size / initial_size)*100)
-                        sg.popup(f"Pronto!\nO arquivo compactado tem {size_delta}% do tamanho do arquivo original.", )
+                        
+                        if size_delta <= 100: # Alguns arquivos já são otimizados e não permitem compressão, podendo até mesmo aumentar de tamanho
+                            sg.popup(f"Pronto!\nO arquivo compactado tem {size_delta}% do tamanho do arquivo original.", )
+                        else:
+                            os.remove(compressed_file)
+                            sg.popup(f"O arquivo {file_to_compress} já é altamente otimizado e não permite compressão.", )
+                    
                     else:
+                        hide_compressor_elements()
+                        window["processing_animation"].update(visible=False)
                         sg.popup("Erro ao salvar o arquivo!", )
+               
                 else:
                     sg.popup(f'Você tem que escolher onde será salvo o arquivo "{file_name}"!', )
             
