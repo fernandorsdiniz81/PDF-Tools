@@ -270,9 +270,28 @@ class Interface:
                 webbrowser.open(self.git)
                         
         window.close()
- 
- 
- 
-         
-app = Interface()
-app.open_window()
+
+
+# app = Interface()
+# app.open_window()
+
+
+
+
+######### Teste #########################################
+from flask import Flask
+
+app = Flask(__name__)
+
+def open_pdftools():
+    interface = Interface()
+    interface.open_window()
+
+@app.route('/')
+def index():
+    open_pdftools()
+    return "Obrigado!"
+    
+    
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=81, debug=True)
