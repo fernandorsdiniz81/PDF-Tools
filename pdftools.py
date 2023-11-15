@@ -64,7 +64,8 @@ class Interface:
         
     
     def create_window(self):
-        sg.theme("SystemDefaultForReal")
+        # sg.theme("SystemDefaultForReal")
+        sg.theme('NoTheme')
         menu = [["&menu",["&sobre", "&contato", "código &fonte"]]]
         self.about = "Esta é uma aplicação independente, com a finalidade de facilitar a manipulação de arquivos PDF.\n\nEm nenhum momento os arquivos são compartilhados na internet.\n"
         self.contact = "Fernando Diniz\nfernandorsdiniz@gmail.com"
