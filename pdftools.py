@@ -1,16 +1,12 @@
-import pypdf # https://pypi.org/project/pypdf/
+from pypdf import PdfReader, PdfWriter
 import os
 import PySimpleGUI as sg
 import re
 import webbrowser
 
 class PdfTools:
-    def __init__(self) -> None:
-        pass
-
-        
     def merger(self, file_list, path):
-        merger = pypdf.PdfWriter()
+        merger = PdfWriter()
                              
         for file in file_list:
             merger.append(file)
@@ -22,8 +18,8 @@ class PdfTools:
     def compressor(self, path, file, file_name, compression, image_quality):
         level = compression
         quality = image_quality
-        reader = pypdf.PdfReader(file)
-        writer = pypdf.PdfWriter()
+        reader = PdfReader(file)
+        writer = PdfWriter()
 
         for page in reader.pages:
             writer.add_page(page)
@@ -40,36 +36,33 @@ class PdfTools:
 class Interface:
     def __init__(self):
         self.favorites_themes = "SystemDefault SystemDefaultForReal SystemDefault1 LightBrown12 DarkGrey10 LightGreen4 Reddit DarkTeal11 DarkGrey7 DarkBlue LightBrown12".split()
+        self.pdf_tools = PdfTools()
     
-    
-    def simplify_file_name(self, file): # para excluir o caminho do nome do arquivo
+
+    def simplify_file_name(self, file): # para excluir o path do nome do arquivo
         pattern = re.compile(r"(.*/)*")
         complete_path = file
         test = re.match(pattern, complete_path)
         if test:
             partial_path = test.group(0)
             file = complete_path.replace(partial_path, "")
-                
         return file
             
         
     def run_merger(self, file_list, path):
-        pdf_tools = PdfTools()
-        pdf_tools.merger(file_list, path)
+        self.pdf_tools.merger(file_list, path)
         
     
     def run_compressor(self, path, file, file_name, compression, image_quality):
-        pdf_tools = PdfTools()
-        pdf_tools.compressor(path, file, file_name, compression, image_quality)
+        self.pdf_tools.compressor(path, file, file_name, compression, image_quality)
         
     
     def create_window(self):
-        # sg.theme("SystemDefaultForReal")
-        sg.theme('NoTheme')
+        sg.theme("SystemDefaultForReal")
         menu = [["&menu",["&sobre", "&contato", "código &fonte"]]]
         self.about = "Esta é uma aplicação independente, com a finalidade de facilitar a manipulação de arquivos PDF.\n\nEm nenhum momento os arquivos são compartilhados na internet.\n"
-        self.contact = "Fernando Diniz\nfernandorsdiniz@gmail.com"
-        self.git = "https://github.com/fernandorsdiniz81/PDF-Tools/blob/main/main.py"
+        self.contact = "Fernando Diniz\ne-mail: fernandorsdiniz@gmail.com\nWhatsapp/Telegram: (31)98777-2280"
+        self.git = "https://github.com/fernandorsdiniz81/PDF-Tools/"
        
         merger_layout = [
                 [sg.Text("Selecione os arquivos a serem mesclados:")],
@@ -139,7 +132,7 @@ class Interface:
             
         while True:
             event, value = window.read(timeout=100)
-            window['processing_animation'].update_animation(sg.DEFAULT_BASE64_LOADING_GIF, time_between_frames=100)                                                  
+            #window['processing_animation'].update_animation(sg.DEFAULT_BASE64_LOADING_GIF, time_between_frames=100)                                                  
             
             if event == sg.WIN_CLOSED:
                 break
@@ -236,12 +229,12 @@ class Interface:
                 
                 if path != None:
                     initial_size = os.path.getsize(file_to_compress)
-                    window["processing_animation"].update(visible=True)
+                    #window["processing_animation"].update(visible=True)
                     self.run_compressor(path, file_to_compress, file_name, compression, image_quality)
                     
                     if os.path.exists(compressed_file):
                         hide_compressor_elements()
-                        window["processing_animation"].update(visible=False)
+                        #window["processing_animation"].update(visible=False)
                         final_size = os.path.getsize(compressed_file)
                         size_delta = round((final_size / initial_size)*100)
                         
@@ -253,12 +246,12 @@ class Interface:
                     
                     else:
                         hide_compressor_elements()
-                        window["processing_animation"].update(visible=False)
+                        #window["processing_animation"].update(visible=False)
                         sg.popup("Erro ao salvar o arquivo!", )
                
                 else:
                     sg.popup(f'Você tem que escolher onde será salvo o arquivo "{file_name}"!', )
-            
+
             ############ menu ##########################################
                    
             elif event == "sobre":
@@ -272,27 +265,8 @@ class Interface:
                         
         window.close()
 
-######### funcionalidade desktop: ###################
-# app = Interface()
-# app.open_window()
 
 
-
-
-######### Teste pra chamar o PDF-Tools web#########################################
-from flask import Flask
-
-app = Flask(__name__)
-
-def open_pdftools():
-    interface = Interface()
-    interface.open_window()
-
-@app.route('/')
-def index():
-    open_pdftools()
-    return "Obrigado!"
-    
-    
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=81, debug=True)
+    app = Interface()
+    app.open_window()
