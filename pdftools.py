@@ -84,8 +84,8 @@ class Interface:
                 ]
         
         layout = [[sg.Menu(menu, key="menu")],
-                [sg.TabGroup([[ sg.Tab("mesclador", merger_layout), 
-                                sg.Tab("compactador", compressor_layout)]], key="tabs", expand_x=True, expand_y=True, selected_background_color="grey")]
+                [sg.TabGroup([[ sg.Tab("mesclagem", merger_layout), 
+                                sg.Tab("compactação", compressor_layout)]], key="tabs", expand_x=True, expand_y=True, selected_background_color="lightblue")]
                 ]   
         
         window = sg.Window("PDF Tools", layout, size=(350,400))
