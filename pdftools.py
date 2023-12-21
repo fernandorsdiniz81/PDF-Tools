@@ -239,7 +239,7 @@ class Interface:
                         final_size = os.path.getsize(compressed_file)
                         size_delta = round((final_size / initial_size)*100)
                         
-                        if size_delta <= 100: # Alguns arquivos já são otimizados e não permitem compressão, podendo até mesmo aumentar de tamanho
+                        if size_delta < 100: # Alguns arquivos já são otimizados e não permitem compressão, podendo até mesmo aumentar de tamanho
                             sg.popup(f"Pronto!\nO arquivo compactado tem {size_delta}% do tamanho do arquivo original.", )
                         else:
                             os.remove(compressed_file)
