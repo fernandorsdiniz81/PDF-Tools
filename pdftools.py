@@ -79,7 +79,7 @@ class Interface:
                 [sg.Text("nível de compressão: ", key="compression_text", visible=False), sg.Spin([i for i in range(1,10)], initial_value=9, key='compression', size=(3,1), visible=False)],
                 [sg.Text("qualidade das imagens:", key="image_quality_text", visible=False), sg.Spin([i for i in range(1,101)], initial_value=80, key='image_quality', size=(3,1), visible=False)],
                 [sg.Image(data=sg.DEFAULT_BASE64_LOADING_GIF, enable_events=True, key='processing_animation', visible=False)],
-                [sg.Text("", key="compressor_text", visible=False, size=(350,1))],
+                [sg.Text("O tamanho do arquivo compactado varia em \nrazão da otimização do arquivo original.", key="compressor_text", visible=False, size=(350,2))],
                 [sg.Button("compactar", bind_return_key=True, visible=False)]
                 ]
         
@@ -121,6 +121,7 @@ class Interface:
             window["compression"].update(visible=True)
             window["image_quality_text"].update(visible=True)
             window["image_quality"].update(visible=True)
+            window["compressor_text"].update(visible=True)
             window["compactar"].update(visible=True)
         
         def hide_compressor_elements():
